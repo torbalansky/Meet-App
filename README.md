@@ -1,5 +1,9 @@
 # Meet-App
 
+### Overview:
+
+MeetApp is an application designed to assist users with researching, scheduling, and attending events in their respective cities. The app was developed using the test-driven development technique (TDD) and has been designed as a serverless, progressive web app (PWA). It utilizes the Google Calendar API to retrieve upcoming events, and access authorization is facilitated by the serverless backend, which is powered by AWS Lambda. This backend performs key verification and generates a token that grants users access to the API. It is important to note that the application is currently in the development stage and may be subject to changes and updates in the near future.
+
 ### FEATURE 1: FILTER EVENTS BY CITY
 User story: As a user, I want to filter events by city so that I can easily see the events taking place in a specific city.
 *Scenario 1:* Show upcoming events from all cities when the user hasn't searched for a specific city.
