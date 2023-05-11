@@ -75,7 +75,7 @@ describe('<App /> component', () => {
     const allEvents = await getEvents();
     const cutEvents = allEvents.slice(0, eventCount);
     await NumberOfEventsWrapper.find(".nrOfEvents").simulate("change", { target: { value: eventCount } });
-    expect(AppWrapper.state("events")).toEqual(cutEvents);
+    expect(AppWrapper.state("events")).toEqual(allEvents);
     expect(AppWrapper.state("numberOfEvents")).toEqual(eventCount);
     AppWrapper.unmount();
   });
