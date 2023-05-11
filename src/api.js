@@ -1,12 +1,3 @@
-/**
- *
- * @param {*} events:
- * The following function should be in the api.js file.
- * This function takes an events array, then uses map to create a new array with only locations.
- * It will also remove all duplicates by creating another new array using the spread operator and spreading a Set.
- * The Set will remove all duplicates from the array.
- */
-
 import { mockData } from './mock-data';
 import axios from 'axios';
 import NProgress from "nprogress";
@@ -41,9 +32,10 @@ const checkToken = async (accessToken) => {
 };
 
 const getToken = async (code) => {
+  try {
     const encodeCode = encodeURIComponent(code);
     const { access_token } = await fetch(
-        'https://e5sy8fv74g.execute-api.eu-west-2.amazonaws.com/dev/api/token' + '/' + encodeCode
+      'https://e5sy8fv74g.execute-api.eu-west-2.amazonaws.com/dev/api/token/' + encodeCode
     )
         .then((res) => {
             return res.json();
@@ -53,6 +45,9 @@ const getToken = async (code) => {
     access_token && localStorage.setItem("access_token", access_token);
 
     return access_token;
+  } catch (error) {
+    error.json();
+  }
 };
 
 export const getEvents = async () => {
@@ -64,7 +59,7 @@ export const getEvents = async () => {
     const token = await getAccessToken();
     if (token) {
         removeQuery();
-        const url = 'https://e5sy8fv74g.execute-api.eu-west-2.amazonaws.com/dev/api/get-events' + '/' + token;
+        const url = 'https://e5sy8fv74g.execute-api.eu-west-2.amazonaws.com/dev/api/get-events/' + token;
         const result = await axios.get(url);
         if (result.data) {
             var locations = extractLocations(result.data.events);
