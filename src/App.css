@@ -3,20 +3,26 @@
 .App {
   text-align: center;
   padding: 2% 5%;
+  margin-top: 40px;
 }
+
 .App * {
   box-sizing: border-box;
 }
+
 ul {
   padding: 0;
   list-style: none;
 }
+
 p {
   margin: 5px 0;
 }
+
 .display-none {
   display: none;
 }
+
 .showSuggestions {
   display: block;
 }
@@ -92,8 +98,13 @@ input[type="number"]:focus {
   background-color: #bcdcdb;
 }
 
+.event:first-child {
+  margin-top: 50px;
+}
+
 .event {
   padding: 10px 10px 35px;
+  margin-top: 30px;
   margin-bottom: 10px;
   text-align: left;
   border: 1px solid #ccc;

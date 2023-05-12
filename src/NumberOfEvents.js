@@ -1,14 +1,35 @@
 import React, { Component } from "react";
+import { ErrorAlert } from "./Alert";
 
-class NumberOfEvents extends Component {
-    state = {
-        query: 32
-    }
+    class NumberOfEvents extends Component {
+        state = {
+            query: 32,
+            errorText: ""
+        }
 
     handleChange = async (event) => {
-        await this.setState({ query: event.target.value });
-        this.props.updateEvents(null, event.target.value);
-    }
+        let value = event.target.value;
+        if (value <= 32 && value > 0) {
+            this.setState({
+            query: value,
+            errorText: ""
+            });
+            this.props.updateEvents(null, value);
+        } else {
+            this.setState({
+            query: value,
+            errorText: "Select number from 1 to 32."
+            });
+        }
+        };
+
+    handleBlur = () => {
+        if (this.state.errorText) {
+          this.setState({
+            errorText: ""
+          });
+        }
+      };
 
     render() {
         return (
@@ -20,7 +41,11 @@ class NumberOfEvents extends Component {
                     className="nrOfEvents"
                     value={this.state.query}
                     onChange={this.handleChange}
+                    onBlur={this.handleBlur}
                 />
+                <div>
+                <ErrorAlert text={this.state.errorText} bold={true} style={{ marginTop: "185px"}}/>
+             </div>
             </div>
         )
     }
