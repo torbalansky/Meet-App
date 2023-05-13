@@ -231,6 +231,11 @@ label {
   display: flex;
   flex-direction: row;
 }
+
+.data-vis-wrapper div:nth-child(2) {
+  flex-grow: 1;
+}
+
 .data-vis-wrapper .recharts-responsive-container {
   min-width: 100%;
   display: flex;
@@ -274,10 +279,5 @@ label {
 
   .data-vis-wrapper {
     flex-direction: column;
-  }
-  .data-vis-wrapper .recharts-responsive-container {
-    flex-basis: 50%;
-    max-width: 50%;
-    min-width: auto;
   }
 }
