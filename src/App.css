@@ -269,11 +269,7 @@ label {
     margin: 0.5rem 0;
   }
 
-  .charts-container {
-    width: 100%;
-  }
-  
-  .recharts-responsive-container {
-    height: 250px;
+  .pie-chart {
+    width: 50%;
   }
 }
