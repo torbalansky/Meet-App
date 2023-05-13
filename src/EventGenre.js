@@ -28,15 +28,15 @@ const EventGenre = ({ events }) => {
         <Pie
           data={data}
           dataKey="value"
+          nameKey="name"
           labelLine={false}
           outerRadius={80}
           label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)} %`}
         >
           {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={entry.fill} name="" />
+            <Cell key={`cell-${index}`} fill={entry.fill} />
           ))}
         </Pie>
-        <Legend verticalAlign="bottom" layout="horizontal" />
         <Tooltip />
       </PieChart>
     </ResponsiveContainer>

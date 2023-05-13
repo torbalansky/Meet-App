@@ -71,9 +71,9 @@ class App extends Component {
         <label>Choose your nearest city</label>
         <CitySearch locations={this.state.locations} updateEvents={this.updateEvents} />
         <NumberOfEvents updateEvents={this.updateEvents} />
+        <div className="charts-container">
+        <EventGenre events={this.state.events} />
                 <ResponsiveContainer height={400}>
-                <div className="charts-container">
-                <EventGenre events={this.state.events} />
                     <ScatterChart
                         margin={{
                             top: 20,
@@ -88,8 +88,8 @@ class App extends Component {
                         <Tooltip cursor={{ strokeDasharray: '3 3' }} />
                         <Scatter data={this.getData()} fill="#8884d8" />
                     </ScatterChart>
-                </div>
                 </ResponsiveContainer>
+                </div>
         <EventList events={this.state.events} />
         <WelcomeScreen showWelcomeScreen={this.state.showWelcomeScreen} getAccessToken={() => { getAccessToken() }}/>
         {!navigator.onLine ? <WarningAlert text={"Offline mode: List loaded from cache."} /> : null}
