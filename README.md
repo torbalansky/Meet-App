@@ -12,7 +12,7 @@ MeetApp is an application designed to assist users with researching, scheduling,
 - HTML
 - CSS
 <br>
-The app is hosted on GitHub Pages and can be found [here](https://torbalansky.github.io/meet/)
+The app is hosted on GitHub Pages and can be found https://torbalansky.github.io/meet/
 
 ### Feature 1: Filter events by city
 User story: As a user, I want to filter events by city so that I can easily see the events taking place in a specific city.
