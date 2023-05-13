@@ -267,12 +267,4 @@ label {
   .google-btn {
     margin: 0.5rem 0;
   }
-
-  .charts-container {
-    flex-basis: 50%;
-    max-width: 50%;
-    min-width: auto;
-    margin: 0 auto;
-  }
-
 }
