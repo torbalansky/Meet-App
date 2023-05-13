@@ -5,6 +5,7 @@ import EventList from './EventList';
 import CitySearch from './CitySearch';
 import NumberOfEvents from "./NumberOfEvents";
 import { extractLocations, getEvents } from "./api";
+import { WarningAlert } from "./Alert";
 
 class App extends Component {
   state = {
@@ -49,6 +50,7 @@ class App extends Component {
         <CitySearch locations={this.state.locations} updateEvents={this.updateEvents} />
         <NumberOfEvents updateEvents={this.updateEvents} />
         <EventList events={this.state.events} />
+        {!navigator.onLine ? <WarningAlert text={"Offline mode: List loaded from cache."} /> : null}
       </div>
     );
   }
