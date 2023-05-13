@@ -8,6 +8,7 @@ import { extractLocations, getEvents, checkToken, getAccessToken } from "./api";
 import { WarningAlert } from "./Alert";
 import WelcomeScreen from "./WelcomeScreen";
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import EventGenre from "./EventGenre";
 
 class App extends Component {
   state = {
@@ -70,7 +71,8 @@ class App extends Component {
         <label>Choose your nearest city</label>
         <CitySearch locations={this.state.locations} updateEvents={this.updateEvents} />
         <NumberOfEvents updateEvents={this.updateEvents} />
-        <h4>Events in each city</h4>
+        <EventList events={this.state.events} />
+        <div className="charts-container">
                 <ResponsiveContainer height={400}>
                     <ScatterChart
                         margin={{
@@ -81,13 +83,13 @@ class App extends Component {
                         }}
                     >
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="city" type="category" name="city" />
-                        <YAxis dataKey="number" type="number" name="number of events" allowDecimals={false} />
+                        <XAxis dataKey="city" type="category" name="City" />
+                        <YAxis dataKey="number" type="number" name="Number of events" allowDecimals={false} />
                         <Tooltip cursor={{ strokeDasharray: '3 3' }} />
                         <Scatter data={this.getData()} fill="#8884d8" />
                     </ScatterChart>
                 </ResponsiveContainer>
-        <EventList events={this.state.events} />
+                </div>
         <WelcomeScreen showWelcomeScreen={this.state.showWelcomeScreen} getAccessToken={() => { getAccessToken() }}/>
         {!navigator.onLine ? <WarningAlert text={"Offline mode: List loaded from cache."} /> : null}
       </div>
