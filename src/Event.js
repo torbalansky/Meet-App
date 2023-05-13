@@ -26,7 +26,7 @@ class Event extends Component {
                     </div>
                 )}
                 {this.state.showWarning && (
-                <WarningAlert text="You are about to leave the Meet app." onClose={() => this.setState({ showWarning: false })} style={{ backgroundColor: "#eee"}}/>
+                <WarningAlert text="You are about to leave the Meet app." onClose={() => this.setState({ showWarning: false })}/>
                 )}
             </div>
         )

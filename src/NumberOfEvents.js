@@ -44,7 +44,7 @@ import { ErrorAlert } from "./Alert";
                     onBlur={this.handleBlur}
                 />
                 <div>
-                <ErrorAlert text={this.state.errorText} bold={true} style={{ marginTop: "185px"}}/>
+                <ErrorAlert text={this.state.errorText} bold={true}/>
              </div>
             </div>
         )
