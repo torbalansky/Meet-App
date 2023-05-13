@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 
 const EventGenre = ({ events }) => {
   const [data, setData] = useState([]);
@@ -31,12 +31,13 @@ const EventGenre = ({ events }) => {
           nameKey="name"
           labelLine={false}
           outerRadius={80}
-          label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)} %`}
+          label={({ percent }) => `${(percent * 100).toFixed(0)} %`}
         >
           {data.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={entry.fill} />
+            <Cell key={`cell-${index}`} fill={entry.fill}/>
           ))}
         </Pie>
+        <Legend verticalAlign="bottom" layout="horizontal"  formatter={(value, entry, index) => <span style={{ color: entry.color }}>{entry.payload.name}</span>} />
         <Tooltip />
       </PieChart>
     </ResponsiveContainer>
