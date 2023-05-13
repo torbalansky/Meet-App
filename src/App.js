@@ -71,9 +71,9 @@ class App extends Component {
         <label>Choose your nearest city</label>
         <CitySearch locations={this.state.locations} updateEvents={this.updateEvents} />
         <NumberOfEvents updateEvents={this.updateEvents} />
-        <div className="charts-container">
+        <div className="data-vis-wrapper">
         <EventGenre events={this.state.events} />
-                <ResponsiveContainer id="pie-chart-container" height={400}>
+                <ResponsiveContainer height={400}>
                     <ScatterChart
                         margin={{
                             top: 20,

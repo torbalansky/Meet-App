@@ -227,9 +227,16 @@ label {
   font-family: "Roboto", sans-serif;
 }
 
-.charts-container {
-  display: flex;
-  flex-direction: column;
+@media only screen and (min-width: 992px) {
+  .data-vis-wrapper {
+    flex-direction: row;
+  }
+  .data-vis-wrapper .recharts-responsive-container {
+    flex-basis: 50%;
+    max-width: 50%;
+    min-width: auto;
+    margin: 0 auto;
+  }
 }
 
 @media only screen and (max-width: 768px) {
@@ -263,13 +270,8 @@ label {
   .button-wrapper {
     grid-template-columns: repeat(2, 1fr);
   }
-  
   .login-button,
   .google-btn {
     margin: 0.5rem 0;
-  }
-
-  #pie-chart-container {
-    width: 50%;
   }
 }
