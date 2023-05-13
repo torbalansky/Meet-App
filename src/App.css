@@ -269,7 +269,7 @@ label {
     margin: 0.5rem 0;
   }
 
-  .pie-chart {
+  #pie-chart-container {
     width: 50%;
   }
 }
