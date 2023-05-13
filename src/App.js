@@ -72,7 +72,6 @@ class App extends Component {
         <CitySearch locations={this.state.locations} updateEvents={this.updateEvents} />
         <NumberOfEvents updateEvents={this.updateEvents} />
         <EventList events={this.state.events} />
-        <div className="charts-container">
                 <ResponsiveContainer height={400}>
                     <ScatterChart
                         margin={{
@@ -89,7 +88,6 @@ class App extends Component {
                         <Scatter data={this.getData()} fill="#8884d8" />
                     </ScatterChart>
                 </ResponsiveContainer>
-                </div>
         <WelcomeScreen showWelcomeScreen={this.state.showWelcomeScreen} getAccessToken={() => { getAccessToken() }}/>
         {!navigator.onLine ? <WarningAlert text={"Offline mode: List loaded from cache."} /> : null}
       </div>

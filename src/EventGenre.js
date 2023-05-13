@@ -23,7 +23,6 @@ const EventGenre = ({ events }) => {
   }
 
   return (
-    <div className="charts-container">
     <ResponsiveContainer height={400}>
       <PieChart>
         <Pie
@@ -42,7 +41,6 @@ const EventGenre = ({ events }) => {
         <Tooltip />
       </PieChart>
     </ResponsiveContainer>
-    </div>
   );
 };
 
