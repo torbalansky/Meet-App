@@ -135,6 +135,7 @@ label {
   color: black;
   border: 2px solid black;
   transition: background-color 0.3s ease;
+  z-index: 1;
 }
 
 .details-btn:hover {
