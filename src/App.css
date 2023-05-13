@@ -229,23 +229,7 @@ label {
 
 .charts-container {
   display: flex;
-  flex-direction: row;
-}
-
-.charts-container div:nth-child(2) {
-  flex-grow: 1;
-}
-
-@media only screen and (min-width: 992px) {
-  .data-vis-wrapper {
-    flex-direction: row;
-  }
-  .data-vis-wrapper .recharts-responsive-container {
-    flex-basis: 50%;
-    max-width: 50%;
-    min-width: auto;
-    margin: 0 auto;
-  }
+  flex-direction: column;
 }
 
 @media only screen and (max-width: 768px) {
@@ -283,4 +267,12 @@ label {
   .google-btn {
     margin: 0.5rem 0;
   }
+
+  .charts-container {
+    flex-basis: 50%;
+    max-width: 50%;
+    min-width: auto;
+    margin: 0 auto;
+  }
+
 }

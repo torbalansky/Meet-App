@@ -73,7 +73,7 @@ class App extends Component {
         <NumberOfEvents updateEvents={this.updateEvents} />
         <div className="charts-container">
         <EventGenre events={this.state.events} />
-                <ResponsiveContainer height={400} widht={600}>
+                <ResponsiveContainer height={400}>
                     <ScatterChart
                         margin={{
                             top: 20,
