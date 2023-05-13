@@ -6,7 +6,7 @@ import CitySearch from './CitySearch';
 import NumberOfEvents from "./NumberOfEvents";
 import { extractLocations, getEvents, checkToken, getAccessToken } from "./api";
 import { WarningAlert } from "./Alert";
-
+import WelcomeScreen from "./WelcomeScreen";
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import EventGenre from "./EventGenre";
 
@@ -91,7 +91,7 @@ class App extends Component {
                 </ResponsiveContainer>
                 </div>
         <EventList events={this.state.events} />
-        
+        <WelcomeScreen showWelcomeScreen={this.state.showWelcomeScreen} getAccessToken={() => { getAccessToken() }}/>
         {!navigator.onLine ? <WarningAlert text={"Offline mode: List loaded from cache."} /> : null}
       </div>
     );
