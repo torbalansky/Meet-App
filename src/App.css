@@ -263,8 +263,17 @@ label {
   .button-wrapper {
     grid-template-columns: repeat(2, 1fr);
   }
+  
   .login-button,
   .google-btn {
     margin: 0.5rem 0;
+  }
+
+  .charts-container {
+    width: 100%;
+  }
+  
+  .recharts-responsive-container {
+    height: 250px;
   }
 }
