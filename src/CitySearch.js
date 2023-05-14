@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { InfoAlert } from './Alert';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 
 class CitySearch extends Component {
     state = {
@@ -38,6 +40,12 @@ class CitySearch extends Component {
         this.props.updateEvents(suggestion);
       }
 
+      toggleSuggestions = () => {
+        this.setState({
+          showSuggestions: !this.state.showSuggestions,
+        });
+      };
+
   render() {
     return (
       <div className="CitySearch">
@@ -48,6 +56,11 @@ class CitySearch extends Component {
             value={this.state.query}
             onChange={this.handleInputChanged}
             onFocus={() => { this.setState({ showSuggestions: true }) }}
+        />
+        <FontAwesomeIcon
+          icon={faCaretDown}
+          onClick={this.toggleSuggestions}
+          style={{ cursor: 'pointer', marginLeft: '5px' }}
         />
         <ul className="suggestions" style={this.state.showSuggestions ? {}: { display: 'none' }}>
         {this.state.suggestions.map((suggestion) => (
