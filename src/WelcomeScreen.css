@@ -3,53 +3,104 @@
     width: 100%;
     height: 100%;
     top: 0;
-    background: white;
+    background: #2a576e;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+    color: #635e5e;
+}
+
+h1 {
+    font-size: 2.5em;
+    color: #ffffff;
+    margin-bottom: 10px;
+    font-family: 'Roboto', sans-serif;
+}
+
+h4 {
+    font-size: 1.2em;
+    color: #ffffff;
+    margin-bottom: 30px;
+    font-family: 'Roboto', sans-serif;
+}
+
+.button_cont {
+    margin-bottom: 20px;
 }
 
 .google-btn {
-    width: 200px;
-    height: 45px;
-    background-color: #4285f4;
-    border-radius: 2px;
+    width: 220px;
+    height: 60px;
+    background-color: #30b2ef;
+    border-radius: 30px;
+    border: none;
+    color: #ffffff;
+    font-size: 16px;
+    font-family: "Roboto", sans-serif;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    cursor: pointer;
+    position: relative;
 }
 
 .google-btn:hover {
-    box-shadow: 0 0 6px #047e63;
+    background-color: #002a3a;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
 }
 
 .google-icon-wrapper {
     position: absolute;
-    width: 40px;
-    height: 40px;
-    border-radius: 50px;
-    background-color: #fff;
-    margin-left: 5px;
-    margin-top: 2px;
+    left: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .google-icon {
-    position: absolute;
-    margin-top: 8px;
-    margin-left: -12px;
-    width: 25px;
-    height: 25px;
+    width: 24px;
+    height: 24px;
+    margin-bottom: 8px;
+    margin-left: 2px;
 }
 
 .btn-text {
     color: #ffffff;
-    font-size: 14px;
-    letter-spacing: 0.4px;
-    font-family: "Roboto";
-    background-color: #4285f4;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    font-family: "Roboto", sans-serif;
+    background-color: transparent;
     border: none;
+    margin-left: 50px;
+}
+
+a {
+    text-decoration: none;
+    background: linear-gradient(45deg, #ca724a, #e6bb5e);
+    padding: 12px 24px;
+    color: #ffffff;
+    font-weight: bold;
+    border-radius: 30px;
+    display: inline-block;
+    transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
 }
 
 a:hover {
-    background-color: #047d0c; 
-    color: white; 
-    border: 1px solid #000000; 
-    padding: 5px;
-    border-radius: 4px; 
-  }
-  
-  
+    background: linear-gradient(45deg, #e6b01d, #d38404);
+    color: #ffffff;
+    transform: translateY(-4px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
