@@ -14,6 +14,12 @@
     color: #635e5e;
 }
 
+.container {
+    background-color: #e4e3e369;
+    padding: 40px;
+    border-radius: 5px;
+}
+
 h1 {
     font-size: 2.5em;
     color: #ffffff;
@@ -22,8 +28,7 @@ h1 {
 }
 
 h4 {
-    font-size: 1.2em;
-    color: #ffffff;
+    color: #ffffffbb;
     margin-bottom: 30px;
     font-family: 'Roboto', sans-serif;
 }
@@ -33,9 +38,9 @@ h4 {
 }
 
 .google-btn {
-    width: 220px;
+    width: 300px;
     height: 60px;
-    background-color: #30b2ef;
+    background-color: #0547fe;
     border-radius: 30px;
     border: none;
     color: #ffffff;
@@ -55,6 +60,11 @@ h4 {
     background-color: #002a3a;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     transform: scale(1.05);
+    cursor: pointer;
+}
+
+b {
+    cursor: pointer;
 }
 
 .google-icon-wrapper {
