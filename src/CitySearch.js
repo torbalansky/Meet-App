@@ -36,12 +36,14 @@ class CitySearch extends Component {
 
   toggleModal = () => {
     const { query } = this.state;
-    const suggestions = this.props.locations.filter((location) =>
-      location.toUpperCase().includes(query.toUpperCase())
-    );
-    this.setState({ 
+    const suggestions = query
+      ? this.props.locations.filter((location) =>
+          location.toUpperCase().includes(query.toUpperCase())
+        )
+      : this.props.locations;
+    this.setState({
       showModal: !this.state.showModal,
-      suggestions: query ? suggestions : [],
+      suggestions: suggestions,
     });
   };
 
