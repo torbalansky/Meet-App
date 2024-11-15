@@ -155,10 +155,6 @@ input[type="text"]:focus {
   border-color: #66c2a5;
 }
 
-.city {
-  width: 250px;
-}
-
 label {
   font-weight: bold;
   margin-bottom: 10px;
