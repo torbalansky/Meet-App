@@ -26,7 +26,7 @@ class CitySearch extends Component {
 
   handleItemClicked = (suggestion) => {
     this.setState({
-      query: suggestion,
+      query: suggestion === 'all' ? '' : suggestion,
       suggestions: [],
       showModal: false,
       infoText: '',
@@ -35,7 +35,14 @@ class CitySearch extends Component {
   };
 
   toggleModal = () => {
-    this.setState({ showModal: !this.state.showModal });
+    const { query } = this.state;
+    const suggestions = this.props.locations.filter((location) =>
+      location.toUpperCase().includes(query.toUpperCase())
+    );
+    this.setState({ 
+      showModal: !this.state.showModal,
+      suggestions: query ? suggestions : [],
+    });
   };
 
   render() {
