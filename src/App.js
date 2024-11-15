@@ -21,13 +21,12 @@ class App extends Component {
 
   getData = () => {
     const { locations, events } = this.state;
-    const data = locations.map(location => {
-        const number = events.filter(event => event.location === location).length;
-        const city = location.split(", ").shift();
-        return { city, number };
+    return locations.map(location => {
+      const number = events.filter(event => event.location === location).length;
+      const city = location.split(", ").shift();
+      return { city, number };
     });
-    return data;
-}
+  }
 
   async componentDidMount() {
     this.mounted = true;
@@ -37,16 +36,15 @@ class App extends Component {
     const code = searchParams.get("code");
     this.setState({ showWelcomeScreen: !(code || isTokenValid) });
     if ((code || isTokenValid) && this.mounted) {
-        getEvents().then((events) => {
-            if (this.mounted) {
-                events = events.slice(0, 32);
-                this.setState({ events, locations: extractLocations(events) });
-            }
-        });
+      getEvents().then((events) => {
+        if (this.mounted) {
+          this.setState({ events: events.slice(0, 32), locations: extractLocations(events) });
+        }
+      });
     }
   }
 
-  componentWillUnmount(){
+  componentWillUnmount() {
     this.mounted = false;
   }
 
@@ -54,9 +52,9 @@ class App extends Component {
     if (location) this.setState({ location });
     if (eventCount) this.setState({ numberOfEvents: eventCount });
     getEvents().then((events) => {
-      const locationEvents = (this.state.location === 'all') ?
-        events :
-        events.filter((event) => event.location === this.state.location);
+      const locationEvents = (this.state.location === 'all')
+        ? events
+        : events.filter((event) => event.location === this.state.location);
       this.setState({
         events: locationEvents.slice(0, this.state.numberOfEvents)
       });
@@ -64,35 +62,34 @@ class App extends Component {
   }
 
   render() {
-    if (this.state.showWelcomeScreen === undefined) return <div className="App" />
+    if (this.state.showWelcomeScreen === undefined) return <div className="App" />;
     return (
       <div className="App">
         <h1>Meet App</h1>
-        <label>Choose your nearest city</label>
-        <CitySearch locations={this.state.locations} updateEvents={this.updateEvents} />
-        <NumberOfEvents updateEvents={this.updateEvents} />
-        <div className="data-vis-wrapper">
-        <EventGenre events={this.state.events} />
-                <ResponsiveContainer height={400}>
-                    <ScatterChart
-                        margin={{
-                            top: 20,
-                            right: 20,
-                            bottom: 10,
-                            left: 10,
-                        }}
-                    >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="city" type="category" name="City" />
-                        <YAxis dataKey="number" type="number" name="Number of events" allowDecimals={false} />
-                        <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                        <Scatter data={this.getData()} fill="#8884d8" />
-                    </ScatterChart>
-                </ResponsiveContainer>
-                </div>
-        <EventList events={this.state.events} />
-        <WelcomeScreen showWelcomeScreen={this.state.showWelcomeScreen} getAccessToken={() => { getAccessToken() }}/>
-        {!navigator.onLine ? <WarningAlert text={"Offline mode: List loaded from cache."} /> : null}
+        <div className="main-container">
+          <div className="left-pane">
+            <CitySearch locations={this.state.locations} updateEvents={this.updateEvents} />
+            <NumberOfEvents updateEvents={this.updateEvents} />
+            <EventGenre events={this.state.events} />
+
+            <ResponsiveContainer height={400} width={600}>
+              <ScatterChart margin={{ top: 10, right: 50, bottom: 5, left: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="city" type="category" name="City" />
+                <YAxis dataKey="number" type="number" name="Number of events" allowDecimals={false} />
+                <Tooltip cursor={{ strokeDasharray: '3 3' }} />
+                <Scatter data={this.getData()} fill="#8884d8" />
+              </ScatterChart>
+            </ResponsiveContainer>
+          </div>
+          
+          <div className="right-pane">
+            <EventList events={this.state.events} />
+          </div>
+        </div>
+
+        <WelcomeScreen showWelcomeScreen={this.state.showWelcomeScreen} getAccessToken={() => getAccessToken()} />
+        {!navigator.onLine && <WarningAlert text={"Offline mode: List loaded from cache."} />}
       </div>
     );
   }
