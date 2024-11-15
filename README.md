@@ -2,49 +2,179 @@
 
 ![](https://github.com/torbalansky/meet/blob/main/MeetApp.png?raw=true)
 
-### Overview:
+## Overview
 
 MeetApp is an application designed to assist users with researching, scheduling, and attending events in their respective cities. The app was developed using the test-driven development technique (TDD) and has been designed as a serverless, progressive web app (PWA). It utilizes the Google Calendar API to retrieve upcoming events, and access authorization is facilitated by the serverless backend, which is powered by AWS Lambda. This backend performs key verification and generates a token that grants users access to the API. It is important to note that the application is currently in the development stage and may be subject to changes and updates in the near future.
 
-### Used technologies
+## Used Technologies
+
 - React
 - JavaScript
 - HTML
 - CSS
-<br>
-The app is hosted on GitHub Pages and can be found https://torbalansky.github.io/meet/
 
-### Feature 1: Filter events by city
-User story: As a user, I want to filter events by city so that I can easily see the events taking place in a specific city.
-*Scenario 1:* Show upcoming events from all cities when the user hasn't searched for a specific city.
-Given the app is loaded. When the user hasn't searched for any city. Then the user should see a list of all upcoming events.
-*Scenario 2:* Show a list of suggestions when the user starts typing the name of a city.
-Given the main page is open with the list of events in all cities. When the user starts typing the name of a city in the text box. Then the user should see a list of cities (suggestions) that match what they have typed.
-*Scenario 3:* Show a list of upcoming events in the specified city when the user searches for a city.
-Given the user has typed "Sofia" in the city textbox, and the list of suggested cities is showing. When the user selects a city (e.g., "Sofia, Bulgaria") from the list of suggested cities. Then the user's city should be changed to the selected city (i.e., "Sofia, Bulgaria") and the user should receive a list of upcoming events in the specified city.
-### Feature 2: Show/Hide an event's details
-User story: As a user, I want to be able to show or hide an event's details so that I can see more or less information about an event.
-*Scenario 1:* Collapse event details by default.
-Given the app is loaded and the user has received a list of upcoming events in the specified city (all cities). When the user views the list of events. Then the event details should not be visible for the user.
-*Scenario 2:* Expand an event to see its details.
-Given the user has received general information about upcoming events. When the user clicks the "Details" button for a specific event. Then the specific event should be expanded with its details.
-*Scenario 3:* Collapse an event to hide its details.
-Given a specific event is expanded with its details. When the user clicks the "Back" button for that specific event. Then the specific event should be collapsed, its details should be hidden, and the user should receive the full list of upcoming events with general information only.
-### Feature 3: Sprecify number of events
-User story: As a user, I want to be able to specify the number of events I want to view in the app so that I can see more or fewer events in the events list at once.
-*Scenario 1:* Use 32 as the default number of events when the user hasn't specified a number.
-Given the app is loaded and the user has received a list of upcoming events in the specified city (all cities). When the user hasn't specified a number of events to be shown. Then the user should receive the first 32 upcoming events on the screen.
-*Scenario 2:* Change the number of events the user wants to see.
-Given the app is loaded and the user has received a list of upcoming events in the specified city (all cities). When the user chooses a number of events to be shown by selecting it in the input (32, 64, or 96). Then the user should receive the first 32, 64, or 96 upcoming events on the screen, depending on the chosen number.
-### Feature 4: Use the app when offline
-User story: As a user, I would like to be able to use the app when offline so that I can see the events I viewed the last time I was online.
-*Scenario 1:* Show cached data when there's no internet connection
-Given the user has previously opened the app with an available internet connection. When the user opens the app without an internet connection. Then the user receives cached data from their last session (the last data the user had seen with an active internet connection).
-*Scenario 2:* Show error when user changes the settings (city, time range)
-Given the user has opened the app without an internet connection and received cached data from their last session. When the user changes the settings (city, time range). Then the user receives an error message indicating that data is not available without an internet connection.
-### Feature 5: Data visualization
-User story: As a user, I would like to be able to see a chart showing the upcoming events in each city so that I know what events are organized in which city.
-*Scenario 1:* Show a chart with the number of upcoming events in each city
-Given the app is loaded, the user has received a list of upcoming events in a specified city (all cities). When the user pushes the button "Visualize." Then they will see a chart showing the number of upcoming events in that city, categorized by type.
+The app is hosted on GitHub Pages and can be found [here](https://torbalansky.github.io/meet/).
 
+---
 
+## Features & Scenarios
+
+### 1. **Filter Events By City**
+
+#### **Scenarios:**
+
+- **Scenario 1**: **When user hasn’t searched for a city, show upcoming events from all cities**
+    ```gherkin
+    Given user hasn't searched for a city
+    When user opens the app
+    Then the user should see the list of all upcoming events
+    ```
+
+- **Scenario 2**: **User should see a list of suggestions when they search for a city**
+    ```gherkin
+    Given the user opens the app
+    When the user starts typing a city name in the textbox
+    Then the user should see a list of suggestions of cities from the dropdown
+    ```
+
+- **Scenario 3**: **User can select a city from the suggested list**
+    ```gherkin
+    Given the event list is displayed
+    And the list of suggested cities is showing
+    When the user selects a city (e.g., "Berlin, Germany") from the list
+    Then their city should be changed to that city (i.e., "Berlin, Germany")
+    And the user should receive a list of upcoming events in that city
+    ```
+
+---
+
+### 2. **Show/Hide Event Details**
+
+#### **Scenarios:**
+
+- **Scenario 1**: **An event element is collapsed by default**
+    ```gherkin
+    Given the user is on the app
+    When the app displays the list of events
+    Then the user should see the event element collapsed by default
+    ```
+
+- **Scenario 2**: **User can expand an event to see details**
+    ```gherkin
+    Given the app displays events and event details are hidden
+    When the user clicks the "show event" button
+    Then the user should see the hidden event expand to view
+    ```
+
+- **Scenario 3**: **User can collapse an event to hide details**
+    ```gherkin
+    Given the event is expanded and visible
+    When the user clicks the "hide event" button
+    Then the user should see the event collapse and hide
+    ```
+
+---
+
+### 3. **Specify Number of Events**
+
+#### **Scenarios:**
+
+- **Scenario 1**: **Show default number of events when user hasn’t specified a number**
+    ```gherkin
+    Given the event app is displayed
+    And the user has not specified the number of events to display
+    When the user views the events section
+    Then 32 events should be displayed by default
+    ```
+
+- **Scenario 2**: **User can change the number of events displayed**
+    ```gherkin
+    Given the event app is displayed
+    And the user has specified the number of events to display as "10"
+    When the user changes the number of events to display to "10"
+    Then the event list should display "10" events
+    ```
+
+---
+
+### 4. **Use the App When Offline**
+
+#### **Scenarios:**
+
+- **Scenario 1**: **Show cached data when there’s no internet connection**
+    ```gherkin
+    Given the event app is installed as a PWA
+    And the app is currently offline
+    And there is cached event data available
+    When the user opens the app
+    Then the app should display the cached event data
+    ```
+
+- **Scenario 2**: **Show error when user changes search settings (city, number of events)**
+    ```gherkin
+    Given the event app is installed as a PWA
+    And the app is currently offline
+    When the user attempts to change the search settings to a different city "New York"
+    Then an error message "Cannot change settings while offline" should be displayed
+
+    Given the event app is installed as a PWA
+    And the app is currently offline
+    When the user attempts to change the number of events to display to "10"
+    Then an error message "Cannot change settings while offline" should be displayed
+    ```
+
+---
+
+### 5. **Add an App Shortcut to the Home Screen**
+
+#### **Scenario:**
+
+- **Scenario 1**: **User can install the meet app as a shortcut on their device home screen**
+    ```gherkin
+    Given the user has the event management app installed
+    When the user adds a shortcut to the home screen
+    Then the user should be able to access the app quickly from the home screen
+    ```
+
+---
+
+### 6. **Display Charts Visualizing Event Details**
+
+#### **Scenario:**
+
+- **Scenario 1**: **Show a chart with the number of upcoming events in each city**
+    ```gherkin
+    Given the user is on the event management app
+    When the user views event details
+    Then the user should see a chart visualizing the number of upcoming events in each city
+    ```
+
+---
+
+## Installation & Setup
+
+To get the MeetApp running locally, follow these steps:
+
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/torbalansky/meet.git
+    ```
+
+2. Navigate to the project folder:
+    ```bash
+    cd meet
+    ```
+
+3. Install dependencies:
+    ```bash
+    npm install
+    ```
+
+4. Run the app:
+    ```bash
+    npm start
+    ```
+
+5. Open the app in your browser at [http://localhost:3000](http://localhost:3000).
+
+---
