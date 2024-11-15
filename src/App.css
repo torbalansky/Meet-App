@@ -70,9 +70,10 @@ label {
 }
 
 .event {
+  width: 400px;
   padding: 15px;
   margin-bottom: 10px;
-  background-color: #242424;
+  background-color: #1a002b;
   border: 1px solid #ccc;
   border-radius: 6px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -82,7 +83,6 @@ label {
 
 .event .details-btn {
   background-color: #ddd;
-  border: 1px solid #ddd;
   padding: 6px 10px;
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -146,7 +146,7 @@ label {
 }
 
 .suggestions li:hover {
-  background-color: #f0f0f0;
+  background-color: #210035;
 }
 
 .suggestions li b {
