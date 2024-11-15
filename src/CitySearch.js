@@ -4,76 +4,83 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 
 class CitySearch extends Component {
-    state = {
-        query: '',
-        suggestions: [],
-        showSuggestions: undefined
-      }
+  state = {
+    query: '',
+    suggestions: [],
+    showSuggestions: false,
+    infoText: ''
+  }
 
-    handleInputChanged = (event) => {
-        const value = event.target.value;
-        const suggestions = this.props.locations.filter((location) => {
-          return location.toUpperCase().indexOf(value.toUpperCase()) > -1;
-        });
-        if (suggestions.length === 0) {
-        this.setState({
-          query: value,
-          infoText: 'City not found. Try another city.',
+  handleInputChanged = (event) => {
+    const value = event.target.value;
+    const suggestions = this.props.locations.filter((location) => {
+      return location.toUpperCase().indexOf(value.toUpperCase()) > -1;
+    });
+
+    if (suggestions.length === 0) {
+      this.setState({
+        query: value,
+        suggestions: [],
+        infoText: 'City not found. Try another city.',
       });
     } else {
-      return this.setState({
-          query: value,
-          suggestions,
-          infoText: ''
-        });
-      }
-    };
+      this.setState({
+        query: value,
+        suggestions,
+        infoText: '',
+      });
+    }
+  };
 
-    handleItemClicked = (suggestion) => {
-        this.setState({
-          query: suggestion,
-          suggestions: [],
-          showSuggestions: false,
-          infoText:''          
-        });
+  handleItemClicked = (suggestion) => {
+    this.setState({
+      query: suggestion,
+      suggestions: [],
+      showSuggestions: false,
+      infoText: ''
+    });
 
-        this.props.updateEvents(suggestion);
-      }
+    this.props.updateEvents(suggestion);
+  };
 
-      toggleSuggestions = () => {
-        this.setState({
-          showSuggestions: !this.state.showSuggestions,
-        });
-      };
+  toggleSuggestions = () => {
+    this.setState({
+      showSuggestions: !this.state.showSuggestions,
+    });
+  };
 
   render() {
     return (
       <div className="CitySearch">
         <input
-            type="text"
-            className="city"
-            placeholder="Search for a city"
-            value={this.state.query}
-            onChange={this.handleInputChanged}
-            onFocus={() => { this.setState({ showSuggestions: true }) }}
+          type="text"
+          className="city"
+          placeholder="Search for a city"
+          value={this.state.query}
+          onChange={this.handleInputChanged}
+          onFocus={() => this.setState({ showSuggestions: true })}
         />
         <FontAwesomeIcon
           icon={faCaretDown}
           onClick={this.toggleSuggestions}
           style={{ cursor: 'pointer', marginLeft: '5px' }}
         />
-        <ul className="suggestions" style={this.state.showSuggestions ? {}: { display: 'none' }}>
-        {this.state.suggestions.map((suggestion) => (
-            <li
-            key={suggestion}
-            onClick={() => this.handleItemClicked(suggestion)}
-          >{suggestion}</li>
-         ))}
-         <li onClick={() => this.handleItemClicked("all")}>
-            <b>See all cities</b>
-         </li>
-        </ul>
-        <InfoAlert text={this.state.infoText} bold={true}/>
+        {this.state.showSuggestions && (
+          <ul className="suggestions">
+            {this.state.suggestions.map((suggestion) => (
+              <li
+                key={suggestion}
+                onClick={() => this.handleItemClicked(suggestion)}
+              >
+                {suggestion}
+              </li>
+            ))}
+            <li onClick={() => this.handleItemClicked("all")}>
+              <b>See all cities</b>
+            </li>
+          </ul>
+        )}
+        <InfoAlert text={this.state.infoText} bold={true} />
       </div>
     );
   }
