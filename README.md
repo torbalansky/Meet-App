@@ -13,7 +13,7 @@ MeetApp is an application designed to assist users with researching, scheduling,
 - HTML
 - CSS
 
-The app is hosted on GitHub Pages and can be found [here](https://torbalansky.github.io/meet/).
+The app is hosted on GitHub Pages and can be found [here]
 
 ---
 
