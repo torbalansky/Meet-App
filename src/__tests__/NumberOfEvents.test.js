@@ -1,30 +1,26 @@
-import React from "react";
-import NumberOfEvents from "../NumberOfEvents";
-import { shallow } from "enzyme";
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import NumberOfEvents from '../NumberOfEvents';
 
-describe("<NumberOfEvents /> component", () => {
-    let NumberOfEventsWrapper;
+describe('<NumberOfEvents /> component', () => {
+  beforeEach(() => {
+    render(<NumberOfEvents updateEvents={() => {}} />);
+  });
 
-    beforeAll(() => {
-        NumberOfEventsWrapper = shallow(<NumberOfEvents updateEvents={() => { }} />);
-    });
+  test('renders text input', () => {
+    expect(screen.getByRole('spinbutton')).toBeInTheDocument();
+  });
 
-    test("render text input", () => {
-        expect(NumberOfEventsWrapper.find(".nrOfEvents")).toHaveLength(1);
-    });
+  test('renders text input with default value', () => {
+    const input = screen.getByRole('spinbutton');
+    expect(input).toHaveValue(32);
+  });
 
-    test("renders text input correctly", () => {
-        const query = NumberOfEventsWrapper.state("query");
-        expect(NumberOfEventsWrapper.find(".nrOfEvents").prop("value")).toBe(query);
-    });
-
-    test("default value is 32", () => {
-        expect(NumberOfEventsWrapper.state("query")).toBe(32);
-    });
-
-    test("change state when text input changes", () => {
-        NumberOfEventsWrapper.setState({ query: 10 });
-        NumberOfEventsWrapper.find(".nrOfEvents").simulate("change", { target: { value: 5 } });
-        expect(NumberOfEventsWrapper.state("query")).toBe(5);
-    });
+  test('changes value when user types', async () => {
+    const input = screen.getByRole('spinbutton');
+    await userEvent.clear(input);
+    await userEvent.type(input, '5');
+    expect(input).toHaveValue(5);
+  });
 });

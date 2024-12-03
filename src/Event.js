@@ -9,13 +9,13 @@ class Event extends Component {
         const { event } = this.props;
 
         return (
-            <div className="event">
-                <h2>{event.summary}</h2>
-                <p>{new Date(event.start.dateTime).toString()}</p>
-                <p>{event.location}</p>
+        <div data-testid="event" className="event">
+            <h2>{event.summary}</h2>
+            <p>{new Date(event.start.dateTime).toString()}</p>
+            <p>{event.location}</p>
                 {!this.state.details ?
                     <button id="details-btn" className="details-btn" onClick={() => this.setState({ details: true })}>show details</button>
-                    : <div className="event__Details">
+                    : <div data-testid="event-details" className="event__Details">
                         <h3>About Event:</h3>
                         <a href={event.htmlLink}>See details on Google Calendar</a>
                         <p>{event.description}</p>

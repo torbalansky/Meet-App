@@ -2,7 +2,7 @@ service: auth-server
 
 provider:
   name: aws
-  runtime: nodejs12.x
+  runtime: nodejs18.x
   region: eu-west-2
   timeout: 30
   environment:

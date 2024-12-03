@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import { InfoAlert } from './Alert';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
-import Modal from './Modal';
 
 class CitySearch extends Component {
   state = {
     query: '',
     suggestions: [],
-    showModal: false,
+    showSuggestions: false,
     infoText: '',
   };
 
@@ -20,6 +19,7 @@ class CitySearch extends Component {
     this.setState({
       query: value,
       suggestions,
+      showSuggestions: true,
       infoText: suggestions.length === 0 ? 'City not found. Try another city.' : '',
     });
   };
@@ -27,48 +27,69 @@ class CitySearch extends Component {
   handleItemClicked = (suggestion) => {
     this.setState({
       query: suggestion === 'all' ? '' : suggestion,
-      suggestions: [],
-      showModal: false,
+      showSuggestions: false,
       infoText: '',
     });
     this.props.updateEvents(suggestion);
   };
 
-  toggleModal = () => {
-    const { query } = this.state;
-    const suggestions = query
-      ? this.props.locations.filter((location) =>
-          location.toUpperCase().includes(query.toUpperCase())
-        )
-      : this.props.locations;
+  handleInputFocus = () => {
     this.setState({
-      showModal: !this.state.showModal,
-      suggestions: suggestions,
+      showSuggestions: true,
+      suggestions: this.props.locations,
     });
   };
 
-  render() {
-    return (
-      <div className="CitySearch">
-        <input
-          type="text"
-          className="city"
-          placeholder="Search for a city"
-          value={this.state.query}
-          onChange={this.handleInputChanged}
-          onFocus={this.toggleModal}
-        />
-        <FontAwesomeIcon
-          icon={faCaretDown}
-          onClick={this.toggleModal}
-          style={{ cursor: 'pointer', marginLeft: '5px' }}
-        />
-        <InfoAlert text={this.state.infoText} bold={true} />
+  handleClickOutside = (event) => {
+    if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+      this.setState({ showSuggestions: false });
+    }
+  };
 
-        <Modal show={this.state.showModal} onClose={this.toggleModal}>
+  componentDidMount() {
+    document.addEventListener('mousedown', this.handleClickOutside);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('mousedown', this.handleClickOutside);
+  }
+
+  render() {
+    const { query, suggestions, showSuggestions, infoText } = this.state;
+
+    return (
+      <div 
+        className="CitySearch"
+        ref={node => this.wrapperRef = node}
+      >
+
+        <div className="search-input-container">
+          <input
+            type="text"
+            className="city"
+            placeholder="Search for a city"
+            value={query}
+            onChange={this.handleInputChanged}
+            onFocus={this.handleInputFocus}
+          />
+          <FontAwesomeIcon
+            data-testid="caret-icon"
+            icon={faCaretDown}
+            onClick={() => this.setState(prev => ({ showSuggestions: !prev.showSuggestions }))}
+            style={{ cursor: 'pointer', marginLeft: '5px' }}
+          />
+        </div>
+        <div className="alert-container">
+          <InfoAlert text={infoText} bold={true} />
+        </div>
+
+        {showSuggestions && (
           <ul className="suggestions">
-            {this.state.suggestions.map((suggestion) => (
-              <li key={suggestion} onClick={() => this.handleItemClicked(suggestion)}>
+            {suggestions.map((suggestion) => (
+              <li 
+                key={suggestion} 
+                onClick={() => this.handleItemClicked(suggestion)}
+              >
                 {suggestion}
               </li>
             ))}
@@ -76,7 +97,7 @@ class CitySearch extends Component {
               <b>See all cities</b>
             </li>
           </ul>
-        </Modal>
+        )}
       </div>
     );
   }

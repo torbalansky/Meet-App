@@ -1,26 +1,35 @@
-import puppeteer from 'puppeteer';
+const puppeteer = require('puppeteer');
 
 describe('show/hide an event details', () => {
-  let browser, page;
+  let browser;
+  let page;
   jest.setTimeout(30000);
 
   beforeAll(async () => {
     try {
+      console.log('Launching browser...');
       browser = await puppeteer.launch({
         headless: false,
-        slowMo: 250, // slow down by 250ms
-        ignoreDefaultArgs: ['--disable-extensions'] // ignores default setting that causes timeout errors
+        slowMo: 250,
+        ignoreDefaultArgs: ['--disable-extensions'],
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
       page = await browser.newPage();
+      console.log('Navigating to page...');
       await page.goto('http://localhost:3000/meet');
-      await page.waitForSelector('.event');
+      console.log('Waiting for event selector...');
+      await page.waitForSelector('.event', { timeout: 60000 });
     } catch (err) {
       console.error('Error during setup:', err);
     }
   });
 
-  afterAll(() => {
-    browser.close();
+  afterAll(async () => {
+    try {
+      await browser.close();
+    } catch (err) {
+      console.error('Error closing browser:', err);
+    }
   });
 
   test('An event element is collapsed by default', async () => {

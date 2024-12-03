@@ -1,62 +1,74 @@
 import { loadFeature, defineFeature } from 'jest-cucumber';
-import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import App from '../App';
-import { mount } from "enzyme";
 import { mockData } from '../mock-data';
 
-const feature = loadFeature('./src/features/showHideAnEventsDetails.feature.md');
+// Mock API functions
+jest.mock('../api', () => ({
+  ...jest.requireActual('../api'),
+  getEvents: jest.fn(() => Promise.resolve(mockData)),
+  checkToken: jest.fn(() => Promise.resolve({ error: false }))
+}));
+
+const feature = loadFeature('./src/features/showHideEventDetails.feature.md');
 
 defineFeature(feature, test => {
-    test('An event element is collapsed by default', ({ given, when, then }) => {
-        let AppWrapper;
-        given('the user is viewing a list of events', async () => {
-            AppWrapper = await mount(<App />);
-            AppWrapper.update();
-            expect(AppWrapper.find('.event')).toHaveLength(mockData.length);
-        });
-
-        when('the user sees an event element', () => {
-            expect(AppWrapper.find('.event').at(0)).toHaveLength(1);
-        });
-
-        then('the event element should be collapsed by default', () => {
-            expect(AppWrapper.find('.event__Details').at(0)).toHaveLength(0);
-        });
+  test('An event element is collapsed by default', ({ given, when, then }) => {
+    given('the user is viewing a list of events', async () => {
+      render(<App />);
+      await waitFor(() => {
+        expect(screen.getByTestId('event-list')).toBeInTheDocument();
+      });
     });
 
-    test('User can expand an event to see its details', ({ given, when, then }) => {
-        let AppWrapper;
-        given('the user is viewing a collapsed event element', async () => {
-            AppWrapper = await mount(<App />);
-            AppWrapper.update();
-            expect(AppWrapper.find('.event').at(0)).toHaveLength(1);
-            expect(AppWrapper.find('.event__Details').at(0)).toHaveLength(0);
-        });
-
-        when('the user clicks on the “Show details” button', () => {
-            AppWrapper.find(".event button").at(0).simulate("click");
-        });
-
-        then('the event element should expand, displaying the event details', () => {
-            expect(AppWrapper.find('.event__Details').at(0)).toHaveLength(1);
-        });
+    when('the user sees an event element', () => {
+      expect(screen.getAllByTestId('event')).toBeDefined();
     });
 
-    test('User can collapse an event to hide its details', ({ given, when, then }) => {
-        let AppWrapper;
-        given('the user is viewing an expanded event element', async () => {
-            AppWrapper = await mount(<App />);
-            AppWrapper.update();
-            AppWrapper.find(".event button").at(0).simulate("click");
-            expect(AppWrapper.find('.event__Details').at(0)).toHaveLength(1);
-        });
-
-        when('the user clicks on the “Hide details” button', () => {
-            AppWrapper.find(".event button").at(0).simulate("click");
-        });
-
-        then('the event element should collapse, hiding the event details', () => {
-            expect(AppWrapper.find('.event__Details').at(0)).toHaveLength(0);
-        });
+    then('the event element should be collapsed by default', () => {
+      const eventDetails = screen.queryByTestId('event-details');
+      expect(eventDetails).not.toBeInTheDocument();
     });
+  });
+
+  test('User can expand an event to see its details', ({ given, when, then }) => {
+    given('the user is viewing a collapsed event element', async () => {
+      render(<App />);
+      await waitFor(() => {
+        expect(screen.getByTestId('event-list')).toBeInTheDocument();
+      });
+    });
+
+    when('the user clicks on the "Show details" button', async () => {
+      const showDetailsButton = screen.getAllByText('Show details')[0];
+      await userEvent.click(showDetailsButton);
+    });
+
+    then('the event element should expand, displaying the event details', () => {
+      const eventDetails = screen.getByTestId('event-details');
+      expect(eventDetails).toBeInTheDocument();
+    });
+  });
+
+  test('User can collapse an event to hide its details', ({ given, when, then }) => {
+    given('the user is viewing an expanded event element', async () => {
+      render(<App />);
+      await waitFor(() => {
+        expect(screen.getByTestId('event-list')).toBeInTheDocument();
+      });
+      const showDetailsButton = screen.getAllByText('Show details')[0];
+      await userEvent.click(showDetailsButton);
+    });
+
+    when('the user clicks on the "Hide details" button', async () => {
+      const hideDetailsButton = screen.getByText('Hide details');
+      await userEvent.click(hideDetailsButton);
+    });
+
+    then('the event element should collapse, hiding the event details', () => {
+      const eventDetails = screen.queryByTestId('event-details');
+      expect(eventDetails).not.toBeInTheDocument();
+    });
+  });
 });

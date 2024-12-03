@@ -1,6 +1,6 @@
 import { loadFeature, defineFeature } from 'jest-cucumber';
-import React from 'react';
-import { mount, shallow } from 'enzyme';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import App from '../App';
 import CitySearch from '../CitySearch';
 import { mockData } from '../mock-data';
@@ -9,65 +9,68 @@ import { extractLocations } from '../api';
 const feature = loadFeature('./src/features/filterEventsByCity.feature.md');
 
 defineFeature(feature, test => {
-
     test('When user hasn\'t searched for a city, show upcoming events from all cities.', ({ given, when, then }) => {
         given('user hasn\'t searched for any city', () => {
         });
 
-        let AppWrapper;
-
         when('the user opens the app', () => {
-            AppWrapper = mount(<App />);
+            render(<App />);
         });
 
-        then('the user should see the list of upcoming events.', () => {
-            AppWrapper.update();
-            expect(AppWrapper.find('.event')).toHaveLength(mockData.length);
+        then('the user should see the list of upcoming events.', async () => {
+            await waitFor(() => {
+                const eventList = screen.getAllByTestId('event');
+                expect(eventList).toHaveLength(mockData.length);
+            });
         });
     });
 
     test('User should see a list of suggestions when they search for a city', ({ given, when, then }) => {
-        let CitySearchWrapper, locations;
-
         given('the main page is open', () => {
-            locations = extractLocations(mockData);
-            CitySearchWrapper = shallow(<CitySearch updateEvents={() => { }} locations={locations} />);
+            const locations = extractLocations(mockData);
+            render(<CitySearch locations={locations} updateEvents={() => {}} />);
         });
 
         when('the user starts typing in the city textbox', () => {
-            CitySearchWrapper.find('.city').simulate('change', { target: { value: 'Berlin' } });
+            const cityInput = screen.getByRole('textbox');
+            userEvent.type(cityInput, 'Berlin');
         });
 
         then('the user should receive a list of cities (suggestions) that match what they\'ve typed', () => {
-            expect(CitySearchWrapper.find('.suggestions li')).toHaveLength(2);
+            const suggestions = screen.getAllByRole('listitem');
+            expect(suggestions).toHaveLength(2);
         });
     });
 
     test('User can select a city from the suggested list', ({ given, and, when, then }) => {
-        let AppWrapper;
+        let cityInput;
 
-        given('user was typing “Berlin” in the city textbox', async () => {
-            AppWrapper = await mount(<App />);
-            AppWrapper.find('.city').simulate('change', { target: { value: 'Berlin' } });
+        given('user was typing "Berlin" in the city textbox', () => {
+            render(<App />);
+            cityInput = screen.getByRole('textbox');
+            userEvent.type(cityInput, 'Berlin');
         });
 
         and('the list of suggested cities is showing', () => {
-            AppWrapper.update();
-            expect(AppWrapper.find('.suggestions li')).toHaveLength(2);
+            const suggestions = screen.getAllByRole('listitem');
+            expect(suggestions).toHaveLength(2);
         });
 
-        when('the user selects a city (e.g., “Berlin, Germany”) from the list', () => {
-            AppWrapper.find('.suggestions li').at(0).simulate('click');
+        when('the user selects a city (e.g., "Berlin, Germany") from the list', () => {
+            const suggestion = screen.getByText('Berlin, Germany');
+            userEvent.click(suggestion);
         });
 
-        then('their city should be changed to that city (i.e., “Berlin, Germany”)', () => {
-            const CitySearchWrapper = AppWrapper.find(CitySearch);
-            expect(CitySearchWrapper.state('query')).toBe('Berlin, Germany');
+        then('their city should be changed to that city (i.e., "Berlin, Germany")', () => {
+            expect(cityInput.value).toBe('Berlin, Germany');
         });
 
-        and('the user should receive a list of upcoming events in that city', () => {
-            AppWrapper.update();
-            expect(AppWrapper.find('.event')).toHaveLength(1);
+        and('the user should receive a list of upcoming events in that city', async () => {
+            await waitFor(() => {
+                const eventList = screen.getAllByTestId('event');
+                const berlinEvents = mockData.filter(event => event.location === 'Berlin, Germany');
+                expect(eventList).toHaveLength(berlinEvents.length);
+            });
         });
     });
 });

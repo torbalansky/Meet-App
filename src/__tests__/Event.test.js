@@ -1,67 +1,60 @@
-import React from "react";
-import Event from "../Event";
-import { shallow } from "enzyme";
-import { mockData } from "../mock-data";
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import Event from '../Event';
+import '@testing-library/jest-dom';
 
-describe("<Event /> component", () => {
-    let EventWrapper;
-    let event;
+describe('<Event /> component', () => {
+  const mockEvent = {
+    summary: 'Test Event',
+    start: {
+      dateTime: '2023-06-15T19:00:00Z',
+    },
+    location: 'Berlin, Germany',
+    description: 'This is a test event description',
+    htmlLink: 'https://www.google.com/calendar/event?eid=test',
+  };
 
-    beforeAll(() => {
-        event = mockData[0];
-        EventWrapper = shallow(<Event event={event} />);
-    });
+  beforeEach(() => {
+    render(<Event event={mockEvent} />);
+  });
 
-    test("render event div", () => {
-        expect(EventWrapper.find(".event")).toHaveLength(1);
-    });
+  test('renders event basic information', () => {
+    expect(screen.getByTestId('event')).toBeInTheDocument();
+    expect(screen.getByText('Test Event')).toBeInTheDocument();
+    expect(screen.getByText(/Berlin, Germany/)).toBeInTheDocument();
+    expect(screen.getByText(/show details/)).toBeInTheDocument();
+  });
 
-    test("render event information elements", () => {
-        expect(EventWrapper.find(".event h2")).toHaveLength(1);
-        expect(EventWrapper.find(".event p")).toHaveLength(2);
-        expect(EventWrapper.find(".event button")).toHaveLength(1);
-    });
+  test('by default, event details are hidden', () => {
+    expect(screen.queryByText('About Event:')).not.toBeInTheDocument();
+    expect(screen.queryByText('See details on Google Calendar')).not.toBeInTheDocument();
+    expect(screen.queryByText('This is a test event description')).not.toBeInTheDocument();
+  });
 
-    test("render correct event title", () => {
-        expect(EventWrapper.find(".event h2").at(0).text()).toBe(event.summary);
-    });
+  test('shows details when show details button is clicked', () => {
+    const button = screen.getByText('show details');
+    fireEvent.click(button);
 
-    test("render correct event time", () => {
-        expect(EventWrapper.find(".event p").at(0).text()).toBe(new Date(event.start.dateTime).toString());
-    });
+    expect(screen.getByText('About Event:')).toBeInTheDocument();
+    expect(screen.getByText('See details on Google Calendar')).toBeInTheDocument();
+    expect(screen.getByText('This is a test event description')).toBeInTheDocument();
+    expect(screen.getByText('hide details')).toBeInTheDocument();
+  });
 
-    test("render correct event location", () => {
-        expect(EventWrapper.find(".event p").at(1).text()).toBe(event.location);
-    });
+  test('hides details when hide details button is clicked', () => {
+    // First show the details
+    fireEvent.click(screen.getByText('show details'));
+    
+    // Then hide them
+    fireEvent.click(screen.getByText('hide details'));
 
-    test("render correct button text", () => {
-        expect(EventWrapper.find(".event button").at(0).text()).toBe("show details");
-    });
+    expect(screen.queryByText('About Event:')).not.toBeInTheDocument();
+    expect(screen.queryByText('See details on Google Calendar')).not.toBeInTheDocument();
+    expect(screen.queryByText('This is a test event description')).not.toBeInTheDocument();
+  });
 
-    test("change show details button text on click", () => {
-        EventWrapper.find(".event button").at(0).simulate("click");
-        expect(EventWrapper.find(".event button").at(0).text()).toBe("hide details");
-        EventWrapper.find(".event button").at(0).simulate("click");
-        expect(EventWrapper.find(".event button").at(0).text()).toBe("show details");
-    });
-
-    test("show details on click show details button", () => {
-        EventWrapper.find(".event button").at(0).simulate("click");
-        expect(EventWrapper.find(".event h3")).toHaveLength(1);
-        expect(EventWrapper.find(".event a")).toHaveLength(1);
-        expect(EventWrapper.find(".event p")).toHaveLength(3);
-        expect(EventWrapper.find(".event h3").at(0).text()).toBe("About Event:");
-        expect(EventWrapper.find(".event a").at(0).text()).toBe("See details on Google Calendar");
-        expect(EventWrapper.find(".event a").at(0).prop("href")).toBe(event.htmlLink);
-        expect(EventWrapper.find(".event p").at(2).text()).toBe(event.description);
-        EventWrapper.find(".event button").at(0).simulate("click");
-    });
-
-    test("hide details", () => {
-        EventWrapper.find(".event button").at(0).simulate("click");
-        EventWrapper.find(".event button").at(0).simulate("click");
-        expect(EventWrapper.find(".event h3").exists()).toBeFalsy();
-        expect(EventWrapper.find(".event a").exists()).toBeFalsy();
-        expect(EventWrapper.find(".event p").at(2).exists()).toBeFalsy();
-    })
+  test('renders correct date format', () => {
+    const dateString = new Date(mockEvent.start.dateTime).toString();
+    expect(screen.getByText(dateString)).toBeInTheDocument();
+  });
 });

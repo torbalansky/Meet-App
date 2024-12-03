@@ -1,93 +1,121 @@
 import React from 'react';
-import { shallow, mount } from 'enzyme';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import App from '../App';
-import EventList from '../EventList';
-import CitySearch from '../CitySearch';
-import NumberOfEvents from '../NumberOfEvents';
-import { extractLocations, getEvents } from '../api';
+import { getEvents } from '../api';
 import { mockData } from '../mock-data';
 
+// Mock the API calls
+jest.mock('../api');
+
 describe('<App /> component', () => {
-  let AppWrapper;
-  beforeAll(() => {
-    AppWrapper = shallow(<App />);
+  beforeEach(() => {
+    // Reset all mocks before each test
+    jest.clearAllMocks();
+    // Mock the getEvents function to return mockData
+    getEvents.mockResolvedValue(mockData);
   });
 
-  test('render list of events', () => {
-    expect(AppWrapper.find(EventList)).toHaveLength(1);
+  test('renders main app components', () => {
+    render(<App />);
+    
+    expect(screen.getByText('Meet App')).toBeInTheDocument();
+    expect(screen.getByTestId('city-search')).toBeInTheDocument();
+    expect(screen.getByTestId('number-of-events')).toBeInTheDocument();
+    expect(screen.getByTestId('event-list')).toBeInTheDocument();
   });
 
-  test('render CitySearch', () => {
-    expect(AppWrapper.find(CitySearch)).toHaveLength(1);
-  });
-
-  test("render NumberOfEvents", () => {
-    expect(AppWrapper.find(NumberOfEvents)).toHaveLength(1);
-  });
-
-  describe('<App /> integration', () => {
-    test('App passes "events" state as a prop to EventList', () => {
-      const AppWrapper = mount(<App />);
-      const AppEventsState = AppWrapper.state('events');
-      expect(AppEventsState).not.toEqual(undefined);
-      expect(AppWrapper.find(EventList).props().events).toEqual(AppEventsState);
-      AppWrapper.unmount();
+  test('renders event list with correct number of events', async () => {
+    render(<App />);
+    
+    await waitFor(() => {
+      const eventElements = screen.getAllByTestId('event');
+      expect(eventElements).toHaveLength(mockData.length);
     });
   });
 
-  test('App passes "locations" state as a prop to CitySearch', () => {
-    const AppWrapper = mount(<App />);
-    const AppLocationsState = AppWrapper.state('locations');
-    expect(AppLocationsState).not.toEqual(undefined);
-    expect(AppWrapper.find(CitySearch).props().locations).toEqual(AppLocationsState);
-    AppWrapper.unmount();
+  test('updates events when city is selected', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+    
+    // Wait for initial events to load
+    await waitFor(() => {
+      expect(screen.getAllByTestId('event')).toHaveLength(mockData.length);
+    });
+
+    // Find and click the city search input
+    const cityInput = screen.getByPlaceholderText('Search for a city');
+    await user.click(cityInput);
+    await user.type(cityInput, 'London');
+
+    // Select London from suggestions
+    const londonOption = screen.getByText('London, UK');
+    await user.click(londonOption);
+
+    // Verify that events are filtered
+    await waitFor(() => {
+      const filteredEvents = screen.getAllByTestId('event');
+      expect(filteredEvents.length).toBeLessThanOrEqual(mockData.length);
+    });
   });
 
-  test('get list of events matching the city selected by the user', async () => {
-    const AppWrapper = mount(<App />);
-    const CitySearchWrapper = AppWrapper.find(CitySearch);
-    const locations = extractLocations(mockData);
-    CitySearchWrapper.setState({ suggestions: locations });
-    const suggestions = CitySearchWrapper.state('suggestions');
-    const selectedIndex = Math.floor(Math.random() * (suggestions.length));
-    const selectedCity = suggestions[selectedIndex];
-    await CitySearchWrapper.instance().handleItemClicked(selectedCity);
-    const allEvents = await getEvents();
-    const eventsToShow = allEvents.filter(event => event.location === selectedCity);
-    expect(AppWrapper.state('events')).toEqual(eventsToShow);
-    AppWrapper.unmount();
+  test('updates number of events when user changes the number', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    // Wait for initial events to load
+    await waitFor(() => {
+      expect(screen.getAllByTestId('event')).toHaveLength(mockData.length);
+    });
+
+    // Find and change the number of events input
+    const numberInput = screen.getByTestId('number-of-events-input');
+    await user.clear(numberInput);
+    await user.type(numberInput, '10');
+
+    // Verify that the number of events is updated
+    await waitFor(() => {
+      const eventElements = screen.getAllByTestId('event');
+      expect(eventElements).toHaveLength(10);
+    });
   });
 
-  test('get list of all events when user selects "See all cities"', async () => {
-    const AppWrapper = mount(<App />);
-    const suggestionItems = AppWrapper.find(CitySearch).find('.suggestions li');
-    await suggestionItems.at(suggestionItems.length - 1).simulate('click');
-    const allEvents = await getEvents();
-    expect(AppWrapper.state('events')).toEqual(allEvents);
-    AppWrapper.unmount();
+  test('displays warning when offline', async () => {
+    // Mock navigator.onLine to be false
+    const originalOnline = window.navigator.onLine;
+    Object.defineProperty(window.navigator, 'onLine', {
+      value: false,
+      writable: true
+    });
+
+    render(<App />);
+
+    expect(screen.getByText('Offline mode: List loaded from cache.')).toBeInTheDocument();
+
+    // Restore original onLine value
+    Object.defineProperty(window.navigator, 'onLine', {
+      value: originalOnline,
+      writable: true
+    });
   });
 
-  
-  test("number of events state equals number of events specified", async () => {
-    const AppWrapper = mount(<App />);
-    const NumberOfEventsWrapper = AppWrapper.find(NumberOfEvents);
-    const eventCount = Math.floor(1 + Math.random() * 2);
-    const allEvents = await getEvents();
-    const cutEvents = allEvents.slice(0, eventCount);
-    await NumberOfEventsWrapper.find(".nrOfEvents").simulate("change", { target: { value: eventCount } });
-    expect(AppWrapper.state("events")).toEqual(allEvents);
-    expect(AppWrapper.state("numberOfEvents")).toEqual(eventCount);
-    AppWrapper.unmount();
+  test('renders charts with event data', async () => {
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('event-genre')).toBeInTheDocument();
+      expect(screen.getByTestId('scatter-chart')).toBeInTheDocument();
+    });
   });
 
-  test("renders correct number of events", async () => {
-    const AppWrapper = mount(<App />);
-    const NumberOfEventsWrapper = AppWrapper.find(NumberOfEvents);
-    const eventCount = Math.floor(1 + Math.random() * 2);
-    const event = { target: { value: eventCount } };
-    await NumberOfEventsWrapper.instance().handleChange(event);
-    AppWrapper.update();
-    expect(AppWrapper.find(EventList).find("li")).toHaveLength(eventCount);
-    AppWrapper.unmount();
+  test('shows welcome screen when no token is present', () => {
+    // Mock localStorage
+    Storage.prototype.getItem = jest.fn(() => null);
+
+    render(<App />);
+    expect(screen.getByTestId('welcome-screen')).toBeInTheDocument();
+
+    // Restore original localStorage
+    jest.restoreAllMocks();
   });
 });

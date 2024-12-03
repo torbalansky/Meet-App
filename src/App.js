@@ -21,11 +21,13 @@ class App extends Component {
 
   getData = () => {
     const { locations, events } = this.state;
-    return locations.map(location => {
+    const data = locations.map(location => {
       const number = events.filter(event => event.location === location).length;
       const city = location.split(", ").shift();
       return { city, number };
     });
+    console.log("Scatter Chart Data:", data);
+    return data;
   }
 
   async componentDidMount() {
@@ -68,11 +70,11 @@ class App extends Component {
         <h1>Meet App</h1>
         <div className="main-container">
           <div className="left-pane">
-            <CitySearch locations={this.state.locations} updateEvents={this.updateEvents} />
-            <NumberOfEvents updateEvents={this.updateEvents} />
-            <EventGenre events={this.state.events} />
+            <CitySearch data-testid="city-search" locations={this.state.locations} updateEvents={this.updateEvents} />
+            <NumberOfEvents data-testid="number-of-events" updateEvents={this.updateEvents} />
+            <EventGenre data-testid="event-genre" events={this.state.events} />
 
-            <ResponsiveContainer height={400} width={600}>
+            <ResponsiveContainer data-testid="scatter-chart" height={400} width="100%">
               <ScatterChart margin={{ top: 10, right: 50, bottom: 5, left: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="city" type="category" name="City" />
@@ -84,11 +86,11 @@ class App extends Component {
           </div>
           
           <div className="right-pane">
-            <EventList events={this.state.events} />
+            <EventList data-testid="event-list" events={this.state.events} />
           </div>
         </div>
 
-        <WelcomeScreen showWelcomeScreen={this.state.showWelcomeScreen} getAccessToken={() => getAccessToken()} />
+        <WelcomeScreen data-testid="welcome-screen" showWelcomeScreen={this.state.showWelcomeScreen} getAccessToken={() => getAccessToken()} />
         {!navigator.onLine && <WarningAlert text={"Offline mode: List loaded from cache."} />}
       </div>
     );
