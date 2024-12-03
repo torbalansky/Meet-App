@@ -1,9 +1,9 @@
 .WelcomeScreen {
     position: fixed;
-    background: transparent;
-    width: 100px;
-    height: 100px;
-    bottom: 0;
+    background: #002a3a;
+    width: 100%;
+    height: 100%;
+    top: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
