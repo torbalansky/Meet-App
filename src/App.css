@@ -131,6 +131,29 @@ input:focus {
   border-radius: var(--radius);
   padding: 1rem;
   box-shadow: var(--shadow);
+  color: var(--text);
+}
+
+.recharts-text {
+  fill: var(--text) !important;
+}
+
+.recharts-default-tooltip {
+  background-color: var(--secondary) !important;
+  border: none !important;
+  border-radius: var(--radius) !important;
+  padding: 1rem !important;
+  color: var(--text) !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: rgba(255, 255, 255, 0.1);
+}
+
+.recharts-scatter-symbol {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .alert-container {

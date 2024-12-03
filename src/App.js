@@ -75,12 +75,48 @@ class App extends Component {
             <EventGenre data-testid="event-genre" events={this.state.events} />
 
             <ResponsiveContainer data-testid="scatter-chart" height={400} width="100%">
-              <ScatterChart margin={{ top: 10, right: 50, bottom: 5, left: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="city" type="category" name="City" />
-                <YAxis dataKey="number" type="number" name="Number of events" allowDecimals={false} />
-                <Tooltip cursor={{ strokeDasharray: '3 3' }} />
-                <Scatter data={this.getData()} fill="#8884d8" />
+              <ScatterChart margin={{ top: 30, right: 50, bottom: 70, left: 60 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.2)" />
+                <XAxis 
+                  dataKey="city" 
+                  type="category" 
+                  name="City" 
+                  tick={{ fill: 'white' }}
+                  label={{ 
+                    value: 'Cities', 
+                    position: 'bottom', 
+                    offset: 50,
+                    fill: 'white'
+                  }}
+                />
+                <YAxis 
+                  dataKey="number" 
+                  type="number" 
+                  name="Number of events" 
+                  allowDecimals={false}
+                  tick={{ fill: 'white' }}
+                  label={{ 
+                    value: 'Number of Events', 
+                    angle: -90, 
+                    position: 'left',
+                    offset: 40,
+                    fill: 'white'
+                  }}
+                />
+                <Tooltip 
+                  cursor={{ strokeDasharray: '3 3' }}
+                  contentStyle={{
+                    backgroundColor: 'rgba(44, 62, 80, 0.9)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    color: 'white'
+                  }}
+                />
+                <Scatter 
+                  data={this.getData()} 
+                  fill="var(--accent)"
+                  fillOpacity={0.8}
+                />
               </ScatterChart>
             </ResponsiveContainer>
           </div>
