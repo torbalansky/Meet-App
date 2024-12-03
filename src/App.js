@@ -106,7 +106,7 @@ class App extends Component {
                 <Tooltip 
                   cursor={{ strokeDasharray: '3 3' }}
                   contentStyle={{
-                    backgroundColor: 'rgba(44, 62, 80, 0.9)',
+                    backgroundColor: 'rgba(213, 234, 255, 0.95)',
                     border: 'none',
                     borderRadius: '8px',
                     color: 'white'
