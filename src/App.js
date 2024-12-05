@@ -13,7 +13,7 @@ import EventGenre from "./EventGenre";
 class App extends Component {
   state = {
     events: [],
-    NumberOfEvents: 32,
+    numberOfEvents: 32,
     locations: [],
     location: "all",
     showWelcomeScreen: undefined
@@ -21,12 +21,13 @@ class App extends Component {
 
   getData = () => {
     const { locations, events } = this.state;
+    if (!locations || !events) return [];
+    
     const data = locations.map(location => {
       const number = events.filter(event => event.location === location).length;
       const city = location.split(", ").shift();
       return { city, number };
     });
-    console.log("Scatter Chart Data:", data);
     return data;
   }
 
@@ -51,17 +52,23 @@ class App extends Component {
   }
 
   updateEvents = (location, eventCount) => {
-    if (location) this.setState({ location });
-    if (eventCount) this.setState({ numberOfEvents: eventCount });
     getEvents().then((events) => {
-      const locationEvents = (this.state.location === 'all')
-        ? events
-        : events.filter((event) => event.location === this.state.location);
+      let locationEvents;
+      if (location === 'all' || !location) {
+        locationEvents = events;
+      } else {
+        locationEvents = events.filter((event) => event.location === location);
+      }
+      
+      const numberOfEvents = eventCount || this.state.numberOfEvents;
+      locationEvents = locationEvents.slice(0, numberOfEvents);
+      
       this.setState({
-        events: locationEvents.slice(0, this.state.numberOfEvents)
+        events: locationEvents,
+        location: location
       });
     });
-  }
+  };
 
   render() {
     if (this.state.showWelcomeScreen === undefined) return <div className="App" />;

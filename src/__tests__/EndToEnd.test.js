@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const config = require('../auth-server/config.json');
 
 describe('show/hide an event details', () => {
   let browser;
@@ -11,10 +12,18 @@ describe('show/hide an event details', () => {
       browser = await puppeteer.launch({
         headless: false,
         slowMo: 250,
-        ignoreDefaultArgs: ['--disable-extensions'],
         args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
       page = await browser.newPage();
+
+      // Set up credentials in localStorage
+      await page.evaluateOnNewDocument((config) => {
+        localStorage.setItem('CLIENT_ID', config.CLIENT_ID);
+        localStorage.setItem('CLIENT_SECRET', config.CLIENT_SECRET);
+        localStorage.setItem('PROJECT_ID', config.PROJECT_ID);
+        localStorage.setItem('CALENDAR_ID', config.CALENDAR_ID);
+      }, config);
+
       console.log('Navigating to page...');
       await page.goto('http://localhost:3000/meet');
       console.log('Waiting for event selector...');

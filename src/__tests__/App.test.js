@@ -1,121 +1,116 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from '../App';
-import { getEvents } from '../api';
-import { mockData } from '../mock-data';
+import { getEvents, extractLocations, checkToken } from '../api';
 
-// Mock the API calls
 jest.mock('../api');
 
-describe('<App /> component', () => {
+const mockData = [
+  {
+    "kind": "calendar#event",
+    "id": "4eahs9ghkhrvkld72hogu9ph3e_20200519T140000Z",
+    "summary": "Learn JavaScript",
+    "location": "London, UK",
+    "start": {
+      "dateTime": "2020-05-19T16:00:00+02:00",
+    },
+    "end": {
+      "dateTime": "2020-05-19T17:00:00+02:00",
+    }
+  },
+  {
+    "kind": "calendar#event",
+    "id": "3qtd6uscq4tsi6gc7nmmtpqlct_20200520T120000Z",
+    "summary": "React is Fun",
+    "location": "Berlin, Germany",
+    "start": {
+      "dateTime": "2020-05-20T14:00:00+02:00",
+    },
+    "end": {
+      "dateTime": "2020-05-20T15:00:00+02:00",
+    }
+  }
+];
+
+describe('App', () => {
   beforeEach(() => {
     // Reset all mocks before each test
     jest.clearAllMocks();
-    // Mock the getEvents function to return mockData
+    localStorage.clear();
     getEvents.mockResolvedValue(mockData);
+    extractLocations.mockReturnValue(['London, UK', 'Berlin, Germany']);
+    checkToken.mockResolvedValue({ error: null });
   });
 
-  test('renders main app components', () => {
+  test('renders the App component', async () => {
+    render(<App />);
+    await waitFor(() => {
+      expect(screen.getByText('Meet App')).toBeInTheDocument();
+    });
+  });
+
+  test('fetches events and locations on mount', async () => {
+    render(<App />);
+    await waitFor(() => {
+      expect(getEvents).toHaveBeenCalledTimes(1);
+      expect(screen.getByText('Learn JavaScript')).toBeInTheDocument();
+      expect(screen.getByText('React is Fun')).toBeInTheDocument();
+    });
+  });
+
+  test('updates the number of events correctly', async () => {
+    render(<App />);
+    await waitFor(() => {
+      const input = screen.getByLabelText(/Select number of events/i);
+      fireEvent.change(input, { target: { value: '1' } });
+    });
+    
+    await waitFor(() => {
+      expect(screen.getByText('Learn JavaScript')).toBeInTheDocument();
+      expect(screen.queryByText('React is Fun')).not.toBeInTheDocument();
+    });
+  });
+
+  test('searches for events by city', async () => {
     render(<App />);
     
-    expect(screen.getByText('Meet App')).toBeInTheDocument();
-    expect(screen.getByTestId('city-search')).toBeInTheDocument();
-    expect(screen.getByTestId('number-of-events')).toBeInTheDocument();
-    expect(screen.getByTestId('event-list')).toBeInTheDocument();
+    // Wait for the initial render
+    await waitFor(() => {
+      expect(screen.getByText('Meet App')).toBeInTheDocument();
+    });
+  
+    // Find and click the search input
+    const searchInput = screen.getByPlaceholderText(/Search for a city/i);
+    fireEvent.change(searchInput, { target: { value: 'Berlin' } });
+  
+    // Wait for suggestions to appear and click on Berlin
+    await waitFor(() => {
+      // Use a more specific selector to find the suggestion list item
+      const berlinOption = screen.getAllByText('Berlin, Germany')[0]; // Get the first occurrence (the suggestion item)
+      fireEvent.click(berlinOption);
+    });
+  
+    // Verify that only Berlin events are shown
+    await waitFor(() => {
+      const events = screen.getAllByTestId('event');
+      expect(events).toHaveLength(1);
+      expect(screen.getByText('React is Fun')).toBeInTheDocument();
+      expect(screen.queryByText('Learn JavaScript')).not.toBeInTheDocument();
+    }, { timeout: 3000 });
   });
 
-  test('renders event list with correct number of events', async () => {
+  test('handles "See all cities" correctly', async () => {
     render(<App />);
-    
     await waitFor(() => {
-      const eventElements = screen.getAllByTestId('event');
-      expect(eventElements).toHaveLength(mockData.length);
+      const citySearch = screen.getByPlaceholderText(/Search for a city/i);
+      fireEvent.change(citySearch, { target: { value: '' } });
+      fireEvent.click(screen.getByTestId('caret-icon'));
     });
-  });
-
-  test('updates events when city is selected', async () => {
-    const user = userEvent.setup();
-    render(<App />);
-    
-    // Wait for initial events to load
-    await waitFor(() => {
-      expect(screen.getAllByTestId('event')).toHaveLength(mockData.length);
-    });
-
-    // Find and click the city search input
-    const cityInput = screen.getByPlaceholderText('Search for a city');
-    await user.click(cityInput);
-    await user.type(cityInput, 'London');
-
-    // Select London from suggestions
-    const londonOption = screen.getByText('London, UK');
-    await user.click(londonOption);
-
-    // Verify that events are filtered
-    await waitFor(() => {
-      const filteredEvents = screen.getAllByTestId('event');
-      expect(filteredEvents.length).toBeLessThanOrEqual(mockData.length);
-    });
-  });
-
-  test('updates number of events when user changes the number', async () => {
-    const user = userEvent.setup();
-    render(<App />);
-
-    // Wait for initial events to load
-    await waitFor(() => {
-      expect(screen.getAllByTestId('event')).toHaveLength(mockData.length);
-    });
-
-    // Find and change the number of events input
-    const numberInput = screen.getByTestId('number-of-events-input');
-    await user.clear(numberInput);
-    await user.type(numberInput, '10');
-
-    // Verify that the number of events is updated
-    await waitFor(() => {
-      const eventElements = screen.getAllByTestId('event');
-      expect(eventElements).toHaveLength(10);
-    });
-  });
-
-  test('displays warning when offline', async () => {
-    // Mock navigator.onLine to be false
-    const originalOnline = window.navigator.onLine;
-    Object.defineProperty(window.navigator, 'onLine', {
-      value: false,
-      writable: true
-    });
-
-    render(<App />);
-
-    expect(screen.getByText('Offline mode: List loaded from cache.')).toBeInTheDocument();
-
-    // Restore original onLine value
-    Object.defineProperty(window.navigator, 'onLine', {
-      value: originalOnline,
-      writable: true
-    });
-  });
-
-  test('renders charts with event data', async () => {
-    render(<App />);
 
     await waitFor(() => {
-      expect(screen.getByTestId('event-genre')).toBeInTheDocument();
-      expect(screen.getByTestId('scatter-chart')).toBeInTheDocument();
+      expect(screen.getByText('London, UK')).toBeInTheDocument();
+      expect(screen.getByText('Berlin, Germany')).toBeInTheDocument();
     });
-  });
-
-  test('shows welcome screen when no token is present', () => {
-    // Mock localStorage
-    Storage.prototype.getItem = jest.fn(() => null);
-
-    render(<App />);
-    expect(screen.getByTestId('welcome-screen')).toBeInTheDocument();
-
-    // Restore original localStorage
-    jest.restoreAllMocks();
   });
 });

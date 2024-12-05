@@ -28,8 +28,10 @@ class CitySearch extends Component {
     this.setState({
       query: suggestion === 'all' ? '' : suggestion,
       showSuggestions: false,
-      infoText: '',
+      infoText: ''
     });
+    
+    // Call updateEvents with the selected city
     this.props.updateEvents(suggestion);
   };
 
